@@ -1382,17 +1382,20 @@ void MultiMesh::_build_ghost_penalty_faces()
   // _ghost_penalty_faces.
   
   _ghost_penalty_faces.resize(num_parts());
-
+  
   for (std::size_t p = 0; p < num_parts(); ++p)
   {
-    const auto mesh = part(p);
+    auto mesh = part(p);
+    mesh->init();
     
     // Find all cut cells close to the boundary, i.e, having a cell facet
     // that is exterior.
     std::vector<bool> cells_to_include(mesh->num_cells(), false);
 
-    for (const auto& cell_index: cut_cells(p))
+    //for (const auto& cell_index: cut_cells(p))
+    for (std::size_t i = 0; i < mesh->num_cells(); ++i)
     {
+      const std::size_t cell_index = i;
       const Cell cell(*mesh, cell_index);
       for (FacetIterator facet(cell); !facet.end(); ++facet)
       {
@@ -1403,9 +1406,32 @@ void MultiMesh::_build_ghost_penalty_faces()
       }
     }
 
+    // Add all facets of these cells
     for (std::size_t i = 0; i < mesh->num_cells(); ++i)
-      if (cells_to_include[i])
-        _ghost_penalty_faces[p].push_back(i);
+      if (cells_to_include[i]) {
+        const Cell cell(*mesh, i);
+        for (FacetIterator facet(cell); !facet.end(); ++facet)
+          if (!facet->exterior())
+            _ghost_penalty_faces[p].push_back(facet->index());
+      }
+    std::sort(_ghost_penalty_faces[p].begin(), _ghost_penalty_faces[p].end());
+    _ghost_penalty_faces[p].erase(std::unique(_ghost_penalty_faces[p].begin(), _ghost_penalty_faces[p].end()), _ghost_penalty_faces[p].end());
+
+    // std::cout << "part " << p<<": ";
+    // for (const auto a: _ghost_penalty_faces[p])
+    //   std::cout << a << ' ';
+    // std::cout << std::endl;
+
+    // const std::size_t D = mesh->topology().dim();
+    // for (const std::size_t fi : _ghost_penalty_faces[p])
+    // {
+    //   const Facet facet(*mesh, fi);
+    //   std::size_t cell_index_plus = facet.entities(D)[0];
+    //   std::size_t cell_index_minus = facet.entities(D)[1];
+    //   std::cout << fi << ' ' << cell_index_plus << ' ' << cell_index_minus << std::endl;
+    // }
+
+    
   }
 }
 //------------------------------------------------------------------------------

@@ -120,13 +120,13 @@ void MultiMeshAssembler::assemble(GenericTensor& A, const MultiMeshForm& a)
   std::cout << " took " << timer.stop() << '\n';
 #endif
   
-//   // Assemble over custom internal faces (ghost penalty faces)
-//   timer.start();  
-//   _assemble_ghost_penalty_faces(A, a);
-// #ifdef DOLFIN_MULTIMESH_PRINT
-//   std::cout << __FUNCTION__<<' '<<__LINE__ << " _assemble_ghost_penalty_faces\n";
-//   std::cout << " took " << timer.stop() << '\n';
-// #endif
+  // Assemble over custom internal faces (ghost penalty faces)
+  timer.start();  
+  _assemble_ghost_penalty_faces(A, a);
+#ifdef DOLFIN_MULTIMESH_PRINT
+  std::cout << __FUNCTION__<<' '<<__LINE__ << " _assemble_ghost_penalty_faces\n";
+  std::cout << " took " << timer.stop() << '\n';
+#endif
   
   // Finalize assembly of global tensor
   if (finalize_tensor)
