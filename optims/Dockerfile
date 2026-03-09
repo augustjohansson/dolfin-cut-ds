@@ -61,8 +61,8 @@ RUN cd /opt/src/dolfin-cut-ds && git pull && \
       -DCMAKE_BUILD_TYPE=RelWithDebInfo \
       -DCMAKE_INSTALL_PREFIX=/usr/local \
       -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
-      -DDOLFIN_ENABLE_TESTS=ON \
-      -DDOLFIN_ENABLE_DEMO=ON \
+      -DDOLFIN_ENABLE_TESTS=OFF \
+      -DDOLFIN_ENABLE_DEMO=OFF \
       -DDOLFIN_ENABLE_BENCHMARKS=OFF \
     || (echo "---- CMakeError.log ----" && cat CMakeFiles/CMakeError.log || true; \
 	echo "---- CMakeOutput.log ----" && cat CMakeFiles/CMakeOutput.log || true; \
